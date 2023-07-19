@@ -44,14 +44,6 @@ const encrypt = (text, password, iv) => {
  * @param {string} password - The password used for decryption.
  * @param {Buffer} iv - The initialization vector used for encryption.
  * @return {string} - The decrypted string.
- * @throws {Error} - If the password is incorrect.
- * @throws {Error} - If the encrypted string is not a valid aes-256-ctr encrypted string.
- * @throws {Error} - If the encrypted string is not a valid JSON string.
- * @throws {Error} - If the encrypted string does not contain the correct keys.
- * @throws {Error} - If the encrypted string does not contain the correct values.
- * @throws {Error} - If the encrypted string does not contain the correct data types.
- * @throws {Error} - If the encrypted string does not contain the correct data.
- * @throws {Error} - If the encrypted string does not contain the correct number of keys.
  */
 const decrypt = (text, password, iv) => {
   const [encryptedIv, encryptedText] = text.split(':');
@@ -91,18 +83,6 @@ const getPasswords = () => {
   } catch (error) {
     return [];
   }
-};
-
-/**
- * This function saves the passwords array to
- * the passwords.json file.
- * @param {*} passwords
- */
-const savePasswords = (passwords) => {
-  fs.writeFileSync(
-    './passwords.json',
-    JSON.stringify(passwords)
-  );
 };
 
 /**
@@ -210,15 +190,9 @@ const genRandomPassword = (
  * it is logged to the console for terminal use.
  * @param {string} userName
  * @param {string} websiteName
- * @param {string} masterPassword
- * @throws {Error} if the user name is not a
  * @returns {string} decrypted password
  */
-const decryptPassword = (
-  userName,
-  websiteName,
-  masterPassword
-) => {
+const decryptPassword = (userName, websiteName) => {
   const encryptedPassword = fs.readFileSync(
     './passwords.json',
     'utf-8'
@@ -258,10 +232,6 @@ const decryptPassword = (
  * validate the user's input and throw an error
  * if it is invalid.
  * @param {string} userName
- * @throws {Error} if the user name is not a
- * string
- * @throws {Error} if the user name is not
- * between 1 and 32 characters long
  * @return {void}
  */
 const setUserName = (inputUserName) => {
@@ -287,10 +257,6 @@ const setUserName = (inputUserName) => {
  * validate the user's input and throw an error
  * if it is invalid.
  * @param {string} websiteName
- * @throws {Error} if the website name is not a
- * string
- * @throws {Error} if the website name is not
- * between 1 and 32 characters long
  * @return {void}
  */
 const setWebsiteName = (inputWebsiteName) => {
@@ -316,18 +282,6 @@ const setWebsiteName = (inputWebsiteName) => {
  * validate the user's input and throw an error
  * if it is invalid.
  * @param {string} inputMasterPassword
- * @throws {Error} if the master password is not
- * a string
- * @throws {Error} if the master password is not
- * between 1 and 32 characters long
- * @throws {Error} if the master password does
- * not contain at least one uppercase letter
- * @throws {Error} if the master password does
- * not contain at least one lowercase letter
- * @throws {Error} if the master password does
- * not contain at least one number
- * @throws {Error} if the master password does
- * not contain at least one special character
  * @return {void}
  */
 const setMasterPassword = (inputMasterPassword) => {
