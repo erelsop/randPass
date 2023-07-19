@@ -124,7 +124,7 @@ const genRandomPassword = (
   masterPassword
 ) => {
   const salt = crypto.randomBytes(16); // Generate a random salt
-  const iterations = 10000; // Number of iterations for key derivation
+  const iterations = 500000; // Number of iterations for key derivation
   const keyLength = 32; // Key length in bytes
 
   // Derive the key from the master password using PBKDF2
