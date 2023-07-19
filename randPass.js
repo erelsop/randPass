@@ -93,7 +93,7 @@ const getPasswords = () => {
 const generateRandomPassword = () => {
   const length = 12;
   const charset =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=';
   let password = '';
 
   for (let i = 0; i < length; i++) {
