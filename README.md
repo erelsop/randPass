@@ -53,7 +53,7 @@ To use the randPass generator, follow these steps:
 4. The generated password will be displayed in the terminal.
 
 5. To retrieve a password, run the application again and
-   enter the same user name,website name, and master
+   enter the same user name, website name, and master
    password. The password will be decrypted and displayed in
    the terminal.
 
