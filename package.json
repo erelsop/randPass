@@ -1,0 +1,19 @@
+{
+  "name": "randpass",
+  "version": "1.0.0",
+  "description": "Random password generator that runs in the terminal. It will ask for the user name and website to generate a new password or retrieve a stored password from an encrypted storage file based on this input.",
+  "main": "randPass.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "passwords",
+    "encryption",
+    "generation"
+  ],
+  "author": "Ethan Elsop",
+  "license": "ISC",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}
