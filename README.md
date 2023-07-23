@@ -39,7 +39,7 @@ retrieve and decrypt the passwords using a master password.
 
 To use the randPass generator, follow these steps:
 
-1. Run the application: `node index.js`
+1. Run the application: `node randPass.js`
 
 2. Follow the prompts in the terminal:
 
