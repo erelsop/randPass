@@ -25,7 +25,7 @@ retrieve and decrypt the passwords using a master password.
 
 1. Clone the repository:
 
-`git clone <repository-url>`
+`git clone https://github.com/erelsop/randPass.git`
 
 2. Navigate to the project directory
 
@@ -70,7 +70,7 @@ To use the randPass generator, follow these steps:
 
 This project is licesned under the MIT License.
 
-You can replace `<repository-url>` in the Installation
+You can replace `https://github.com/erelsop/randPass.git` in the Installation
 section with the URL of your repository. Make sure to also
 include the `LICENSE` file in your repository and update the
 license information in the License section accordingly.
