@@ -103,8 +103,8 @@ const runPasswordManager = (): void => {
     const salt = crypto.randomBytes(16);
     const key = deriveKey(masterPassword, salt);
 
-    const userName = readlineSync.question('Enter the user name for the new password: ');
-    const websiteName = readlineSync.question('Enter the website name for the new password: ');
+    const userName = readlineSync.question('Enter the user name for the new password (e.g., janedoe@example.com): ');
+    const websiteName = readlineSync.question('Enter the website name for the new password (e.g., example.com): ');
     const password = generateRandomPassword();
 
     const encryptedUserName = encrypt(userName, key);
@@ -121,8 +121,8 @@ const runPasswordManager = (): void => {
     encryptFile(passwords, masterPassword);
     console.log('New password generated and saved securely.');
   } else if (action.toLowerCase() === 'r') {
-    const userNameInput = readlineSync.question('Enter the user name for the password you want to retrieve: ');
-    const websiteNameInput = readlineSync.question('Enter the website name for the password you want to retrieve: ');
+    const userNameInput = readlineSync.question('Enter the user name for the password you want to retrieve (e.g., janedone@example.com): ');
+    const websiteNameInput = readlineSync.question('Enter the website name for the password you want to retrieve (e.g., example.com): ');
 
     let foundEntry: PasswordEntry | undefined;
     for (const entry of passwords) {
