@@ -1,8 +1,8 @@
 import typescript from '@rollup/plugin-typescript';
-import { terser } from 'rollup-plugin-terser';
+import terser  from '@rollup/plugin-terser';
 
 export default {
-  input: './src/index.ts', // Adjust if your entry file is located elsewhere
+  input: './src/index.ts',
   output: [
     {
       file: './dist/bundle.js',
@@ -10,11 +10,12 @@ export default {
     },
   ],
   plugins: [
-    typescript(), // Compile TypeScript files
-    terser(), // Minify the output (optional)
+    typescript(),
+    terser(),
   ],
   external: [
-    'readline-sync', // Exclude node_modules from the bundle
-    // List any other dependencies you wish to exclude from the bundle
+    'readline-sync',
+    'crypto',
+    'fs',
   ]
 };
