@@ -16,6 +16,7 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^20.11.19",
     "@types/readline-sync": "^1.4.8",
     "rollup": "^2.79.1",
     "tree-cli": "^0.6.7",
