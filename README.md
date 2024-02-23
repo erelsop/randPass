@@ -7,7 +7,7 @@ A command-line password manager for securely generating, retrieving, updating, a
 To install randPass-cli, run the following command in your terminal:
 
 ```bash
-npm install -g randPass-cli
+npm install -g randpass-cli
 ```
 
 ## Usage
