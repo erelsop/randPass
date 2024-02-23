@@ -1,17 +1,29 @@
 {
-  "name": "randpass2",
+  "name": "randpass-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "A command-line password manager for securely generating, retrieving, updating, and deleting passwords.",
   "type": "module",
-  "main": "/dist/index.js",
+  "main": "dist/index.js",
+  "bin": {
+    "randPass": "./dist/index.js"
+  },
   "scripts": {
     "build": "rollup -c",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "password",
+    "manager",
+    "cli",
+    "encryption",
+    "security"
+  ],
   "author": "Ethan Elsop",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.15",
     "chalk": "^5.3.0",
     "inquirer": "^9.2.15",
     "readline-sync": "^1.4.10"
@@ -19,6 +31,7 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/inquirer": "^9.0.7",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^20.11.19",
     "@types/readline-sync": "^1.4.8",
