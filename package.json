@@ -1,6 +1,6 @@
 {
   "name": "randpass-cli",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "A command-line password manager for securely generating, retrieving, updating, and deleting passwords.",
   "type": "module",
   "main": "dist/index.mjs",
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "npm run build"
+    "prepare": "npm run build && sed -i '1s;^;#!/usr/bin/env node\\n;' dist/index.mjs"
   },
   "keywords": [
     "password",
