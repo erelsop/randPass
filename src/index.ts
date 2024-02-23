@@ -1,193 +1,93 @@
-import * as crypto from "crypto";
-import * as fs from "fs";
-import * as readlineSync from "readline-sync";
+import inquirer from "inquirer";
+import chalk from "chalk";
+import { decryptFile, encryptFile } from "./crypto/fileOperations.util";
+import { addPassword } from "./actions/addPassword.action";
+import { retrievePassword } from "./actions/retrievePassword.action";
+import { updatePassword } from "./actions/updatePassword.action";
+import { deletePassword } from "./actions/deletePassword.action";
+import styles from "./colors/styles";
 
-type EncryptedData = {
-  iv: string;
-  encrypted: string;
-  authTag: string;
-};
-
-interface PasswordEntry {
-  userName: EncryptedData;
-  websiteName: EncryptedData;
-  password: EncryptedData;
-  salt: string;
-}
-
-const algorithm = "aes-256-gcm";
-const filePath = "./passwords.enc";
-
-const encryptFile = (data: PasswordEntry[], password: string) => {
-  const salt = crypto.randomBytes(16);
-  const hexSalt = salt.toString("hex");
-  const key = deriveKey(password, salt);
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv(algorithm, key, iv);
-  const encrypted = Buffer.concat([
-    cipher.update(JSON.stringify(data), "utf8"),
-    cipher.final(),
-  ]);
-  const authTag = cipher.getAuthTag();
-  fs.writeFileSync(
-    filePath,
-    Buffer.concat([Buffer.from(hexSalt, "hex"), iv, authTag, encrypted])
+/**
+ * The main function of the Secure Password Manager.
+ *
+ * This function welcomes the user and prompts them to enter their master password.
+ * It then decrypts the file containing the password entries using the master password.
+ * It prompts the user to select an action to perform: add a new password, retrieve an existing password,
+ * update a password, delete a password, or quit the program.
+ * It performs the selected action and then prompts the user to select another action.
+ * It repeats this process until the user decides to quit the program.
+ * It then informs the user that the program is exiting.
+ */
+async function main() {
+  console.log(
+    chalk.hex(styles.success)("Welcome to the Secure Password Manager")
   );
-};
 
-const deriveKey = (password: string, salt: Buffer): Buffer => {
-  return crypto.pbkdf2Sync(password, salt, 100000, 32, "sha256");
-};
+  const { masterPassword } = await inquirer.prompt([
+    {
+      type: "password",
+      name: "masterPassword",
+      message: chalk.hex(styles.prompt)("Enter your master password:"),
+      mask: "*",
+    },
+  ]);
 
-const decryptFile = (password: string): PasswordEntry[] => {
-  try {
-    if (!fs.existsSync(filePath)) {
-      return [];
-    }
-    const content = fs.readFileSync(filePath);
-    const salt = content.subarray(0, 16);
-    const iv = content.subarray(16, 32);
-    const authTag = content.subarray(32, 48);
-    const encrypted = content.subarray(48);
-    const key = crypto.pbkdf2Sync(password, salt, 100000, 32, "sha256");
-    const decipher = crypto.createDecipheriv(algorithm, key, iv);
-    decipher.setAuthTag(authTag);
-    const decrypted = decipher.update(encrypted) + decipher.final("utf8");
-    return JSON.parse(decrypted);
-  } catch (error) {
-    console.log(
-      "Failed to decrypt the file. The master password may be incorrect, or the file is corrupted."
-    );
-    return [];
-  }
-};
-
-const encrypt = (text: string, key: Buffer): EncryptedData => {
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv(algorithm, key, iv) as crypto.CipherGCM;
-
-  let encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  const authTag = cipher.getAuthTag().toString("hex");
-
-  return { iv: iv.toString("hex"), encrypted, authTag };
-};
-
-const decrypt = (encryptedObj: EncryptedData, key: Buffer): string => {
-  const decipher = crypto.createDecipheriv(
-    algorithm,
-    key,
-    Buffer.from(encryptedObj.iv, "hex")
-  ) as crypto.DecipherGCM;
-  decipher.setAuthTag(Buffer.from(encryptedObj.authTag, "hex"));
-
-  let decrypted = decipher.update(encryptedObj.encrypted, "hex", "utf8");
-  decrypted += decipher.final("utf8");
-
-  return decrypted;
-};
-
-const generateRandomPassword = (): string => {
-  const length = 12;
-  const charset =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
-  let password = "";
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length);
-    password += charset[randomIndex];
-  }
-  return password;
-};
-
-const runPasswordManager = (): void => {
-  console.log("Welcome to the Secure Password Manager");
-
-  const masterPassword = readlineSync.question("Enter your master password: ", {
-    hideEchoBack: true,
-  });
   let passwords = decryptFile(masterPassword);
 
-  if (passwords === null) {
-    console.log("Unable to access your passwords. Exiting...");
-    return;
-  }
+  const getAction = async () => {
+    const { action } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "action",
+        message: chalk.hex(styles.prompt)("What would you like to do?"),
+        choices: [
+          {
+            name: chalk.hex(styles.option)("Add a new password"),
+            value: "add",
+          },
+          {
+            name: chalk.hex(styles.option)("Retrieve an existing password"),
+            value: "retrieve",
+          },
+          {
+            name: chalk.hex(styles.option)("Update a password"),
+            value: "Update Password",
+          },
+          {
+            name: chalk.hex(styles.option)("Delete a password"),
+            value: "delete",
+          },
+          { name: chalk.hex(styles.error)("Quit"), value: "quit" },
+        ],
+      },
+    ]);
 
-  const action = readlineSync.question(
-    'Do you want to (a)dd a new password or (r)etrieve an existing one? Enter "a" or "r": '
-  );
+    return action;
+  };
 
-  if (action.toLowerCase() === "a") {
-    const salt = crypto.randomBytes(16);
-    const key = deriveKey(masterPassword, salt);
+  let action = await getAction();
 
-    const userName = readlineSync.question(
-      "Enter the user name for the new password (e.g., janedoe@example.com): "
-    );
-    const websiteName = readlineSync.question(
-      "Enter the website name for the new password (e.g., example.com): "
-    );
-    const password = generateRandomPassword();
-
-    const encryptedUserName = encrypt(userName, key);
-    const encryptedWebsiteName = encrypt(websiteName, key);
-    const encryptedPassword = encrypt(password, key);
-
-    passwords.push({
-      userName: encryptedUserName,
-      websiteName: encryptedWebsiteName,
-      password: encryptedPassword,
-      salt: salt.toString("hex"),
-    });
-
-    encryptFile(passwords, masterPassword);
-    console.log("New password generated and saved securely.");
-  } else if (action.toLowerCase() === "r") {
-    const userNameInput = readlineSync.question(
-      "Enter the user name for the password you want to retrieve (e.g., janedone@example.com): "
-    );
-    const websiteNameInput = readlineSync.question(
-      "Enter the website name for the password you want to retrieve (e.g., example.com): "
-    );
-
-    let foundEntry: PasswordEntry | undefined;
-    for (const entry of passwords) {
-      const entryKey = deriveKey(
-        masterPassword,
-        Buffer.from(entry.salt, "hex")
-      );
-      try {
-        const decryptedUserName = decrypt(entry.userName, entryKey);
-        const decryptedWebsiteName = decrypt(entry.websiteName, entryKey);
-        if (
-          decryptedUserName === userNameInput &&
-          decryptedWebsiteName === websiteNameInput
-        ) {
-          foundEntry = entry;
-          break;
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.warn("Error decrypting an entry:", error.message);
-        } else {
-          console.warn("An unknown error occurred during decryption.");
-        }
-      }
+  while (action !== "quit") {
+    switch (action) {
+      case "delete":
+        passwords = await deletePassword(passwords, masterPassword);
+        break;
+      case "Update Password":
+        await updatePassword(passwords, masterPassword);
+        break;
+      case "add":
+        passwords = await addPassword(passwords, masterPassword);
+        encryptFile(passwords, masterPassword);
+        break;
+      case "retrieve":
+        await retrievePassword(passwords, masterPassword);
+        break;
     }
 
-    if (foundEntry) {
-      const decryptedPassword = decrypt(
-        foundEntry.password,
-        deriveKey(masterPassword, Buffer.from(foundEntry.salt, "hex"))
-      );
-      console.log(
-        `The password for ${websiteNameInput} is: ${decryptedPassword}`
-      );
-    } else {
-      console.log("No matching entry found.");
-    }
-  } else {
-    console.log("Invalid action selected.");
+    action = await getAction();
   }
-};
 
-runPasswordManager();
+  console.log(chalk.hex(styles.success)("Exiting..."));
+}
+
+main();

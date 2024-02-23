@@ -5,8 +5,8 @@ export default {
   input: './src/index.ts',
   output: [
     {
-      file: './dist/bundle.js',
-      format: 'cjs',
+      file: './dist/index.js',
+      format: 'es',
     },
   ],
   plugins: [
@@ -17,5 +17,7 @@ export default {
     'readline-sync',
     'crypto',
     'fs',
+    'inquirer',
+    'chalk',
   ]
 };
